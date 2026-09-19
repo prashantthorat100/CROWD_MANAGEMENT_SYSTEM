@@ -1,0 +1,11 @@
+fastapi>=0.115.0
+uvicorn>=0.30.0
+pydantic>=2.7.0
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.5.0
+opencv-python>=4.10.0
+python-multipart>=0.0.9
+# Note: ultralytics and torch are listed for Phase 3 deep learning YOLO setup
+# ultralytics>=8.2.0
+# torch>=2.2.0
