@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Crowd Detection & Real-Time Security Alert Operations Center powered by Deep Learning AI">
+    <title>AI Crowd Detection & Security Alert System</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Top Navigation Header -->
+        <header class="navbar" id="main-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>CROWD EYE AI</h1>
+                    <span class="sub-brand">AI Crowd Detection & Security Alert System</span>
+                </div>
+            </div>
+
+            <div class="header-status">
+                <div class="status-badge" id="system-status-pill">
+                    <span class="status-dot green"></span>
+                    <span id="system-status-text">AI MODEL ONLINE</span>
+                </div>
+
+                <div class="live-clock" id="live-clock-display">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="clock-time">00:00:00</span>
+                </div>
+
+                <button class="btn-icon" id="sound-toggle-btn" title="Toggle Alarm Sound">
+                    <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace Layout -->
+        <div class="main-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar" id="main-sidebar">
+                <nav class="nav-menu">
+                    <button class="nav-item active" data-tab="tab-dashboard" id="nav-dashboard">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="nav-item" data-tab="tab-live-cameras" id="nav-cameras">
+                        <i class="fa-solid fa-video"></i>
+                        <span>Live Cameras</span>
+                    </button>
+                    <button class="nav-item" data-tab="tab-sandbox" id="nav-sandbox">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>AI Sandbox / Upload</span>
+                    </button>
+                    <button class="nav-item" data-tab="tab-alerts" id="nav-alerts">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Alert History</span>
+                        <span class="badge-count" id="unack-count-badge">1</span>
+                    </button>
+                    <button class="nav-item" data-tab="tab-settings" id="nav-settings">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Threshold Settings</span>
+                    </button>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="model-info-card">
+                        <div class="info-row">
+                            <span class="label">Model:</span>
+                            <span class="val font-mono">Roboflow Crowd AI v3</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Engine:</span>
+                            <span class="val font-mono">OpenCV + NMS</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Pages -->
+            <main class="content-area" id="content-main">
+                
+                <!-- TAB 1: DASHBOARD -->
+                <section class="tab-pane active" id="tab-dashboard">
+                    <!-- Key KPI Stat Cards -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card glass" id="card-current-count">
+                            <div class="kpi-icon blue">
+                                <i class="fa-solid fa-user-group"></i>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-title">Current Crowd Count</span>
+                                <h2 class="kpi-value" id="kpi-current-val">124</h2>
+                                <span class="kpi-trend" id="kpi-trend-text"><i class="fa-solid fa-arrow-trend-up"></i> Peak active</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card glass" id="card-risk-status">
+                            <div class="kpi-icon red" id="risk-icon-box">
+                                <i class="fa-solid fa-shield-cat"></i>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-title">Threat Level</span>
+                                <h2 class="kpi-value status-red" id="kpi-status-val">CRITICAL</h2>
+                                <span class="kpi-subtitle" id="kpi-status-desc">CROWD ALERT (>=100)</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card glass" id="card-density-rate">
+                            <div class="kpi-icon amber">
+                                <i class="fa-solid fa-braille"></i>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-title">Density Index</span>
+                                <h2 class="kpi-value" id="kpi-density-val">84.2%</h2>
+                                <span class="kpi-subtitle">High crowding in Zone 1</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card glass" id="card-active-alerts">
+                            <div class="kpi-icon purple">
+                                <i class="fa-solid fa-bell"></i>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-title">Unresolved Alerts</span>
+                                <h2 class="kpi-value" id="kpi-alerts-val">1</h2>
+                                <span class="kpi-subtitle" id="kpi-total-alerts">3 total logged</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Grid: Live Viewport + Real-Time Graph -->
+                    <div class="dash-grid">
+                        <!-- Main AI Camera Viewport -->
+                        <div class="viewport-card glass">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-camera-rotate"></i>
+                                    <span>Primary Surveillance Stream (Zone 1 - Main Entrance)</span>
+                                </div>
+                                <div class="view-controls">
+                                    <button class="btn-sm btn-outline active" id="btn-toggle-boxes"><i class="fa-regular fa-square"></i> Boxes</button>
+                                    <button class="btn-sm btn-outline active" id="btn-toggle-heatmap"><i class="fa-solid fa-fire"></i> Heatmap</button>
+                                    <button class="btn-sm btn-primary" id="btn-refresh-feed"><i class="fa-solid fa-arrows-rotate"></i> Refresh AI</button>
+                                </div>
+                            </div>
+                            <div class="viewport-container" id="dash-viewport-box">
+                                <img src="/api/stream?cam=1" id="dash-stream-img" alt="Live Camera Stream" class="stream-feed">
+                                <div class="hud-overlay">
+                                    <div class="hud-top-left">
+                                        <span class="rec-dot"></span> REC LIVE [CAM-01]
+                                    </div>
+                                    <div class="hud-top-right font-mono" id="dash-hud-count">
+                                        PEOPLE: 124
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Chart Widget -->
+                        <div class="chart-card glass">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-chart-area"></i>
+                                    <span>Crowd Density Time-Series Trend</span>
+                                </div>
+                                <span class="tag-badge">Real-Time</span>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="crowdTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Density Heatmap Grid & Recent Incident Log -->
+                    <div class="dash-grid bottom">
+                        <!-- Density Spatial Grid Matrix -->
+                        <div class="grid-matrix-card glass">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-grip"></i>
+                                    <span>Spatial Zone Crowd Density Heatmap (5x5 Grid)</span>
+                                </div>
+                            </div>
+                            <div class="spatial-grid" id="spatial-density-matrix">
+                                <!-- 5x5 Grid items generated dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Live Incident Alerts Quick Table -->
+                        <div class="recent-alerts-card glass">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                    <span>Recent Threat Alerts</span>
+                                </div>
+                                <button class="btn-link" id="btn-view-all-alerts">View All Alerts &rarr;</button>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table" id="table-dash-alerts">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Zone</th>
+                                            <th>Count</th>
+                                            <th>Level</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dash-alerts-tbody">
+                                        <!-- Dynamic alert rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: LIVE CAMERAS GRID -->
+                <section class="tab-pane" id="tab-live-cameras">
+                    <div class="section-header">
+                        <h2>Multi-Camera Surveillance Operations Grid</h2>
+                        <div class="grid-controls">
+                            <button class="btn-sm btn-outline active" id="grid-layout-4"><i class="fa-solid fa-table-cells-large"></i> 2x2 Grid</button>
+                            <button class="btn-sm btn-outline" id="grid-layout-2"><i class="fa-solid fa-table-columns"></i> 1x2 Grid</button>
+                        </div>
+                    </div>
+
+                    <div class="cameras-grid-container grid-4" id="cameras-wrapper">
+                        <!-- Camera 1 -->
+                        <div class="cam-box glass">
+                            <div class="cam-header">
+                                <span class="cam-name"><i class="fa-solid fa-video"></i> CAM-01: Main Entrance Plaza</span>
+                                <span class="status-pill status-red" id="cam1-status">CRITICAL (124)</span>
+                            </div>
+                            <div class="cam-body">
+                                <img src="/api/stream?cam=1" class="cam-feed-img" alt="Cam 1 Feed">
+                            </div>
+                            <div class="cam-footer font-mono">
+                                <span>FPS: 24.0</span>
+                                <span>Conf: 50%</span>
+                                <span>NMS: 0.40</span>
+                            </div>
+                        </div>
+
+                        <!-- Camera 2 -->
+                        <div class="cam-box glass">
+                            <div class="cam-header">
+                                <span class="cam-name"><i class="fa-solid fa-video"></i> CAM-02: Central Concourse</span>
+                                <span class="status-pill status-orange" id="cam2-status">HIGH (82)</span>
+                            </div>
+                            <div class="cam-body">
+                                <img src="/api/stream?cam=2" class="cam-feed-img" alt="Cam 2 Feed">
+                            </div>
+                            <div class="cam-footer font-mono">
+                                <span>FPS: 24.0</span>
+                                <span>Conf: 50%</span>
+                                <span>NMS: 0.40</span>
+                            </div>
+                        </div>
+
+                        <!-- Camera 3 -->
+                        <div class="cam-box glass">
+                            <div class="cam-header">
+                                <span class="cam-name"><i class="fa-solid fa-video"></i> CAM-03: Transit Platform Hub</span>
+                                <span class="status-pill status-amber" id="cam3-status">MEDIUM (48)</span>
+                            </div>
+                            <div class="cam-body">
+                                <img src="/api/stream?cam=3" class="cam-feed-img" alt="Cam 3 Feed">
+                            </div>
+                            <div class="cam-footer font-mono">
+                                <span>FPS: 24.0</span>
+                                <span>Conf: 50%</span>
+                                <span>NMS: 0.40</span>
+                            </div>
+                        </div>
+
+                        <!-- Camera 4 -->
+                        <div class="cam-box glass">
+                            <div class="cam-header">
+                                <span class="cam-name"><i class="fa-solid fa-video"></i> CAM-04: Outdoor Perimeter</span>
+                                <span class="status-pill status-green" id="cam4-status">NORMAL (18)</span>
+                            </div>
+                            <div class="cam-body">
+                                <img src="/api/stream?cam=4" class="cam-feed-img" alt="Cam 4 Feed">
+                            </div>
+                            <div class="cam-footer font-mono">
+                                <span>FPS: 24.0</span>
+                                <span>Conf: 50%</span>
+                                <span>NMS: 0.40</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: AI SANDBOX / FILE UPLOAD & WEBCAM -->
+                <section class="tab-pane" id="tab-sandbox">
+                    <div class="section-header">
+                        <h2>AI Crowd Model Interactive Sandbox</h2>
+                        <p class="subtitle">Upload any image or test crowd detection with your custom files using Roboflow AI model</p>
+                    </div>
+
+                    <div class="sandbox-layout">
+                        <!-- Left Uploader Control Panel -->
+                        <div class="sandbox-controls glass">
+                            <h3><i class="fa-solid fa-upload"></i> Source Selection</h3>
+                            
+                            <!-- Dropzone -->
+                            <div class="dropzone" id="file-dropzone">
+                                <input type="file" id="sandbox-file-input" accept="image/*" hidden>
+                                <div class="dropzone-content">
+                                    <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                                    <h4>Drag & Drop Image Here</h4>
+                                    <p>or click to browse from computer</p>
+                                    <span class="file-limits">Supports JPG, PNG, WEBP up to 20MB</span>
+                                </div>
+                            </div>
+
+                            <div class="sample-loader">
+                                <span class="sample-label">Or load sample project file:</span>
+                                <button class="btn-sm btn-outline btn-full" id="btn-load-sample">
+                                    <i class="fa-solid fa-image"></i> Load `crowd.jpg` Sample
+                                </button>
+                            </div>
+
+                            <div class="sandbox-status-card hidden" id="upload-progress-box">
+                                <div class="spinner"></div>
+                                <span>Running AI inference model...</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Output Viewport & Interactive Comparison Slider -->
+                        <div class="sandbox-results glass">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-microchip"></i>
+                                    <span>AI Detection Results & Heatmap Overlay</span>
+                                </div>
+                                <div class="result-stats-pill hidden" id="result-stats-pill">
+                                    Count: <strong id="res-count-num">0</strong> | Status: <strong id="res-status-tag">NORMAL</strong>
+                                </div>
+                            </div>
+
+                            <div class="sandbox-viewport" id="sandbox-viewport-container">
+                                <div class="placeholder-msg" id="sandbox-placeholder">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p>Select an image to see deep learning crowd detections, bounding boxes, and density overlays in real-time.</p>
+                                </div>
+                                <img src="" id="sandbox-result-img" class="result-image hidden" alt="AI Detection Output">
+                            </div>
+
+                            <!-- Detailed Predictions Breakdown Table -->
+                            <div class="predictions-table-box hidden" id="predictions-details-card">
+                                <h4><i class="fa-solid fa-list-check"></i> Individual Detections Breakdown</h4>
+                                <div class="table-scroll">
+                                    <table class="data-table" id="table-predictions">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Confidence</th>
+                                                <th>BBox (X, Y)</th>
+                                                <th>Dimensions (W x H)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="predictions-tbody">
+                                            <!-- Filled dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: ALERT HISTORY CENTER -->
+                <section class="tab-pane" id="tab-alerts">
+                    <div class="section-header">
+                        <h2>Security Alert Audit History & Management</h2>
+                        <button class="btn-sm btn-primary" id="btn-export-alerts-csv">
+                            <i class="fa-solid fa-file-csv"></i> Export Alerts CSV
+                        </button>
+                    </div>
+
+                    <div class="alerts-center-card glass">
+                        <div class="table-container">
+                            <table class="data-table" id="table-all-alerts">
+                                <thead>
+                                    <tr>
+                                        <th>Alert ID</th>
+                                        <th>Date & Time</th>
+                                        <th>Zone / Location</th>
+                                        <th>Crowd Count</th>
+                                        <th>Severity Level</th>
+                                        <th>Alert Message</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="all-alerts-tbody">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 5: SYSTEM THRESHOLD SETTINGS -->
+                <section class="tab-pane" id="tab-settings">
+                    <div class="section-header">
+                        <h2>System Thresholds & Detection Parameters</h2>
+                        <p class="subtitle">Fine-tune crowd level boundaries, confidence thresholds, and alarm triggers</p>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="settings-card glass">
+                            <h3><i class="fa-solid fa-sliders"></i> Crowd Density Threshold Cutoffs</h3>
+                            
+                            <div class="form-group">
+                                <label for="range-low">Low Crowd Threshold (<span id="val-low">30</span> people)</label>
+                                <input type="range" id="range-low" min="5" max="50" value="30">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="range-medium">Medium Crowd Threshold (<span id="val-medium">70</span> people)</label>
+                                <input type="range" id="range-medium" min="30" max="100" value="70">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="range-high">High Crowd / Critical Threshold (<span id="val-high">100</span> people)</label>
+                                <input type="range" id="range-high" min="50" max="250" value="100">
+                            </div>
+
+                            <button class="btn-primary" id="btn-save-thresholds"><i class="fa-solid fa-floppy-disk"></i> Save Threshold Settings</button>
+                        </div>
+
+                        <div class="settings-card glass">
+                            <h3><i class="fa-solid fa-gear"></i> AI Model Parameters</h3>
+                            
+                            <div class="form-group">
+                                <label for="range-conf">Confidence Cutoff (<span id="val-conf">50%</span>)</label>
+                                <input type="range" id="range-conf" min="10" max="90" value="50">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="range-nms">NMS IoU Suppress Threshold (<span id="val-nms">0.40</span>)</label>
+                                <input type="range" id="range-nms" min="10" max="80" value="40">
+                            </div>
+
+                            <div class="form-group toggle-group">
+                                <label for="toggle-sound-alarm">Audible Warning Alarm Sound</label>
+                                <input type="checkbox" id="toggle-sound-alarm" checked>
+                            </div>
+
+                            <button class="btn-outline" id="btn-test-alarm"><i class="fa-solid fa-bullhorn"></i> Test Audio Warning Siren</button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Audio Alert Element -->
+    <script src="app.js"></script>
+</body>
+</html>

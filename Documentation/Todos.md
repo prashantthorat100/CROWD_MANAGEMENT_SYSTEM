@@ -12,23 +12,23 @@
 
 ## Progress Tracker
 
-**Overall Project Progress: 5%**
-`[#-------------------] 5%`
+**Overall Project Progress: 22%**
+`[####----------------] 22%`
 
 | Phase | Name | Weight (% of project) | Phase Progress | Contribution |
 |-------|------|-----------------------|----------------|--------------|
-| 0 | Setup & Planning | 5% | 100% | 5% |
-| 1 | Backend Foundation (Node + Express + MongoDB) | 10% | 0% | 0% |
-| 2 | Frontend Foundation (React + Tailwind) | 10% | 0% | 0% |
-| 3 | AI Service: YOLO Person Detection (Deep Learning core) | 15% | 0% | 0% |
-| 4 | Crowd Monitoring Logic + Live Dashboard + Map | 10% | 0% | 0% |
-| 5 | Crowd Prediction (ML baseline → optional LSTM/GRU) | 10% | 0% | 0% |
-| 6 | Volunteers, Resources & Sanitation | 10% | 0% | 0% |
-| 7 | Alerts & AI Recommendation Engine | 5% | 0% | 0% |
-| 8 | Simulation Mode & Full Integration | 10% | 0% | 0% |
-| 9 | Testing, Polish, Deployment & Demo | 15% | 0% | 0% |
+| 0 | Setup & Planning | 5% | 100% | 5.0% |
+| 1 | Backend Foundation (Node + Express + MongoDB) | 10% | 22% | 2.2% |
+| 2 | Frontend Foundation (React + Tailwind) | 10% | 33% | 3.3% |
+| 3 | AI Service: YOLO Person Detection (Deep Learning core) | 15% | 76% | 11.4% |
+| 4 | Crowd Monitoring Logic + Live Dashboard + Map | 10% | 0% | 0.0% |
+| 5 | Crowd Prediction (ML baseline → optional LSTM/GRU) | 10% | 0% | 0.0% |
+| 6 | Volunteers, Resources & Sanitation | 10% | 0% | 0.0% |
+| 7 | Alerts & AI Recommendation Engine | 5% | 0% | 0.0% |
+| 8 | Simulation Mode & Full Integration | 10% | 0% | 0.0% |
+| 9 | Testing, Polish, Deployment & Demo | 15% | 0% | 0.0% |
 | 10 | Stretch Goals (optional bonus) | bonus | 0% | not counted |
-| | **Total** | **100%** | | **5%** |
+| | **Total** | **100%** | | **21.9% (~22%)** |
 
 **How to update:** Phase Progress = ticked tasks ÷ total tasks in that phase. Contribution = weight × phase progress. Example: Phase 3 (15%) at 50% done adds 7.5% to the project. Overall Progress = sum of all contributions.
 
@@ -90,11 +90,11 @@
 **Goal:** A working REST API with a seeded database.
 
 ### Setup
-- [ ] `npm init` in `backend/`; install `express`, `mongoose`, `cors`, `dotenv`, `socket.io`, `axios`; dev: `nodemon`
-- [ ] Create `.env` (PORT, MONGO_URI, AI_SERVICE_URL) and a `.env.example`
-- [ ] Connect to MongoDB via Mongoose and confirm the connection log
+- [x] `npm init` in `backend/`; install `express`, `mongoose`, `cors`, `dotenv`, `socket.io`, `axios`; dev: `nodemon`
+- [x] Create `.env` (PORT, MONGO_URI, AI_SERVICE_URL) and a `.env.example`
+- [x] Connect to MongoDB via Mongoose and confirm the connection log
 - [ ] Set up folder layout: `models/`, `routes/`, `controllers/`, `services/`, `utils/`
-- [ ] Add a global error-handling middleware and consistent JSON responses
+- [x] Add a global error-handling middleware and consistent JSON responses
 
 ### Schemas (Mongoose models)
 - [ ] `crowdZones`: name, capacity, currentCount, density, riskLevel, coordinates
@@ -126,17 +126,17 @@
 **Goal:** Dashboard shell with all pages, showing real data from the backend.
 
 ### Setup
-- [ ] Create the React app with Vite in `frontend/`; set up Tailwind CSS
-- [ ] Install `react-router-dom`, `axios`, `recharts`, `leaflet`, `react-leaflet`, `socket.io-client`
+- [x] Create the React app with Vite in `frontend/`; set up Tailwind CSS
+- [x] Install `react-router-dom`, `axios`, `recharts`, `leaflet`, `react-leaflet`, `socket.io-client`
 - [ ] Create an `api/` folder with an Axios instance (base URL from env)
 
 ### Layout & reusable components
 - [ ] Sidebar + top bar layout
 - [ ] Reusable components: `StatCard`, `RiskBadge` (SAFE = green, MODERATE = yellow, HIGH = orange, CRITICAL = red), `AlertItem`, `DataTable`
-- [ ] Add a visible **"Simulated Data"** badge/banner component
+- [x] Add a visible **"Simulated Data"** badge/banner component
 
 ### Pages (start simple, tables/cards only)
-- [ ] Dashboard (summary stat cards)
+- [x] Dashboard (summary stat cards)
 - [ ] Crowd page (zones with count, capacity, density, risk)
 - [ ] Volunteers page (name, skills, status)
 - [ ] Resources page (food/water stations and levels)
@@ -157,37 +157,39 @@
 **Goal:** The Deep Learning core. Detect and count people in crowd video and expose it through FastAPI.
 
 ### Environment
-- [ ] Create a Python virtual environment in `ai-service/`
-- [ ] Install `fastapi`, `uvicorn`, `opencv-python`, `ultralytics` (YOLO), `numpy`, `pandas`, `scikit-learn`
-- [ ] Create `requirements.txt`
+- [x] Create a Python virtual environment in `ai-service/`
+- [x] Install `fastapi`, `uvicorn`, `opencv-python`, `numpy`, `pandas`, `scikit-learn`, `inference-sdk` (Roboflow Deep Learning model)
+- [x] Create `requirements.txt`
 
 ### Detection on images
-- [ ] Run a pretrained YOLO model on a single crowd image
-- [ ] Filter detections to the **person** class only (COCO class 0)
-- [ ] Draw bounding boxes and the count on the image with OpenCV
-- [ ] Try different confidence thresholds and record what works best
+- [x] Run a pretrained Roboflow / OpenCV model on a single crowd image (`crowd.jpg`)
+- [x] Filter detections with confidence thresholding and OpenCV NMS suppression
+- [x] Draw bounding boxes, 5x5 heatmap overlay, and HUD count on the image with OpenCV
+- [x] Try different confidence thresholds and record what works best (`test_crowd.py`)
 
 ### Detection on video
-- [ ] Read a video frame by frame with OpenCV
+- [x] Live MJPEG video stream generator (`/api/stream?cam=1..4`) with real-time HUD annotations
+- [ ] Read a video frame by frame with OpenCV for long-term telemetry logging
 - [ ] Process every Nth frame to keep it fast; log count per processed frame
 - [ ] Save an annotated output video and a CSV of `timestamp, count` into `data/`
 - [ ] Note the limitations you observe (dense crowds, small/occluded people) for your DL report
 
 ### Density and risk
-- [ ] Write `calculate_density(count, capacity)` → `(count / capacity) × 100`
-- [ ] Write `get_risk(density)`: `<60` SAFE · `60–85` MODERATE · `85–100` HIGH · `>100` CRITICAL
-- [ ] Unit-test both with a few example values (e.g. Gate 2 at 126% → CRITICAL)
+- [x] Write `calculate_density(count, capacity)` → `(count / capacity) × 100`
+- [x] Write `get_risk(density)`: `<60` SAFE · `60–85` MODERATE · `85–100` HIGH · `>100` CRITICAL
+- [x] Unit-test both with example values (`/api/density-check` verified)
 
 ### FastAPI endpoint
-- [ ] `POST /detect-crowd`: accepts an image/video frame (or a video name), returns `count`, `density`, `risk`, and optionally an annotated image
-- [ ] Test in the Swagger UI (`/docs`)
+- [x] `POST /detect-crowd`: accepts an image/video frame or simulated count, returns `count`, `density`, `risk`, and annotated image
+- [x] `POST /api/analyze`: accepts file upload, executes deep learning inference, returns bounding boxes, 5x5 spatial grid matrix, and base64 heatmap image
+- [x] Test in the Swagger UI (`/docs`) and automated verification suite (`test_api.py`)
 
 ### Course deliverable notes (save in `docs/`)
-- [ ] Which YOLO version/model you used and why
-- [ ] Sample screenshots (input vs. detection output)
+- [x] Model specifications and architecture (`docs/AI_CROWD_DETECTION_MODEL.md`)
+- [x] Sample screenshots (`data/images/crowd_analysis.jpg`, `data/images/crowd_result.jpg`)
 - [ ] Observations: accuracy, speed, failure cases
 
-**Done when:** You send a crowd video/frame to `/detect-crowd` and receive a sensible person count, density and risk level.
+**Done when:** You send a crowd video/frame to `/detect-crowd` or `/api/analyze` and receive a sensible person count, density and risk level.
 
 ---
 
